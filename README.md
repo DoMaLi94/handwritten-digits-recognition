@@ -1,3 +1,3 @@
-# Machine Learning Aalgorithms For Recognizing Handwritten Digits
+# Handwritten Digits Recognition
 
 Machine learning project for applied fundamentals of artificial intelligence.
