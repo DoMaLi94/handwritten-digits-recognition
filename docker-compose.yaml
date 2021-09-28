@@ -1,0 +1,12 @@
+version: "3.4"
+services:
+  jupyter:
+    container_name: jupyterlab
+    build: 
+        context: .
+        dockerfile: Dockerfile
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    ports:
+      - 8080:8080
+    command: "start.sh jupyter lab --port 8080 --LabApp.token=''"

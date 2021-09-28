@@ -1,3 +1,10 @@
+# Other documents
+documents
+
+# Data directorys
+notebooks/datasets/
+data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
