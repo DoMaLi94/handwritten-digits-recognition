@@ -1,0 +1,75 @@
+FROM jupyter/tensorflow-notebook:latest
+
+LABEL maintainer="Dominik Linsmayer"
+
+USER root
+
+# Install python-tk htop
+RUN apt update \
+    && apt install -y --no-install-recommends python-tk \
+    software-properties-common build-essential swig \ 
+    htop \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Step down from root
+USER $NB_USER
+
+# Conda xgboost, catboost, pytorch
+RUN conda install --quiet --yes \
+    'xgboost' \
+    'catboost' \
+    'pytorch' \
+    && conda clean -tipsy \
+    && fix-permissions $CONDA_DIR \
+    && fix-permissions /home/$NB_USER
+
+# Install scikit-learn, scikit-image, scikit-deap, auto-sklearn, ...
+RUN $CONDA_DIR/bin/python -m pip install \
+    scikit-learn[alldeps] \
+    sklearn-deap \
+    auto-sklearn
+
+# Install tpot and dependecies
+RUN $CONDA_DIR/bin/python -m pip install \
+    deap \
+    update_checker \
+    tqdm \
+    stopit \
+    tpot
+
+# Install VS Code LSP
+RUN $CONDA_DIR/bin/python -m pip install \
+        jupyter-lsp \
+        python-language-server[all] \
+    && export NODE_OPTIONS=--max-old-space-size=4096 \
+    && jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build \
+    && jupyter labextension install @krassowski/jupyterlab-lsp \
+    && jupyter lab build \
+    && unset NODE_OPTIONS \
+    && conda clean -tipsy \
+    && jupyter lab clean \
+    && jlpm cache clean \
+    && npm cache clean --force \
+    && find /opt/conda/ -type f,l -name '*.a' -delete \
+    && find /opt/conda/ -type f,l -name '*.pyc' -delete \
+    && find /opt/conda/ -type f,l -name '*.js.map' -delete \
+    && find /opt/conda/lib/python*/site-packages/bokeh/server/static -type f,l -name '*.js' -not -name '*.min.js' -delete \
+    && rm -rf /opt/conda/pkgs
+
+# Install matplotlib, seaborn, yellowbrick, kmapper, skope-rules, shap, lime, h5py, cv2
+RUN $CONDA_DIR/bin/python -m pip install \
+    matplotlib \
+    seaborn \
+    h5py \
+    opencv-python
+
+USER root
+
+RUN $CONDA_DIR/bin/python -m pip install --upgrade tables
+
+# clean up pip cache
+RUN rm -rf /root/.cache/pip/*
+
+# Step down from root
+USER $NB_USER
