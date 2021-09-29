@@ -2,8 +2,8 @@
 documents
 
 # Data directorys
-notebooks/datasets/
-data/
+notebooks/datasets/*
+data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
