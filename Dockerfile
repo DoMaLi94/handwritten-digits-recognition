@@ -15,4 +15,4 @@ RUN export NODE_OPTIONS=--max-old-space-size=4096 \
 RUN pip install jupyter-lsp \
     && pip install python-language-server[all]
 
-RUN pip install numpy pandas sklearn tpot auto-sklearn
+RUN pip install numpy pandas sklearn
